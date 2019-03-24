@@ -1,0 +1,3 @@
+  camera_on: 'videop2proxy --ip 192.168.1.87 --token 79474c63313277507654785345347a36 --rtsp 8554'
+  camera_video_on: "miiocli device --ip 192.168.1.87 --token 79474c63313277507654785345347a36 raw_command set_video '[\"on\"]'"
+  camera_video_off: "miiocli device --ip 192.168.1.87 --token 79474c63313277507654785345347a36 raw_command set_video '[\"off\"]'"

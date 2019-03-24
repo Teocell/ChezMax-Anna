@@ -1,0 +1,79 @@
+vacuum.xiaomi_vacuum_cleaner:
+  friendly_name: BB8
+switch.home_cinema:
+  icon: mdi:theater
+light.libreria:
+  icon: mdi:led-strip
+light.gateway_light_7811dcdeb4de:
+  friendly_name: Luce notturna
+  icon: mdi:flash-circle
+sensor.orchidea_light_intensity:
+  icon: mdi:white-balance-sunny
+sensor.pianta_light_intensity:
+  icon: mdi:white-balance-sunny
+sensor.bonsai_light_intensity:
+  icon: mdi:white-balance-sunny
+sensor.bonsai_moisture:
+  icon: mdi:water-percent
+sensor.orchidea_moisture:
+  icon: mdi:water-percent
+sensor.pianta_moisture:
+  icon: mdi:water-percent
+sensor.bonsai_conductivity:
+  icon: mdi:test-tube
+sensor.orchidea_conductivity:
+  icon: mdi:test-tube
+sensor.pianta_conductivity:
+  icon: mdi:test-tube
+light.lampada_ikea:
+  icon: mdi:floor-lamp
+binary_sensor.smoke_sensor_158d0001d935e0:
+  friendly_name: Sensore Fumo
+  icon: mdi:fire
+sensor.bonsai_battery:
+  icon: mdi:battery
+sensor.orchidea_battery:
+  icon: mdi:battery
+sensor.pianta_battery:
+  icon: mdi:battery
+binary_sensor.door_window_sensor_158d0001c1cae0:
+  icon: mdi:door
+device_tracker.msperoni00s_iphone:
+  friendly_name: Marco
+device_tracker.iphone_di_anna:
+  friendly_name: Anna
+binary_sensor.door_window_sensor_158d0001dcc094:
+  icon: mdi:door
+binary_sensor.door_window_sensor_158d0001bf2892:
+  friendly_name: Finestra Camera da Letto
+  icon: mdi:door
+binary_sensor.natgas_sensor_158d00012cd546:
+  icon: mdi:gas-cylinder
+zone.pwc:
+  icon: mdi:tie
+zone.ronzoni:
+  icon: mdi:beaker
+device_tracker.418d:
+  icon: mdi:car-sports
+input_select.vacuum_room_select:
+  icon: mdi:floor-plan
+input_select.climateoff_time_select:
+  icon: mdi:timer-off
+input_select.climateon_time_select:
+  icon: mdi:timer
+script.turnoff_timer_climate:
+  icon: mdi:fan-off
+script.turnon_timer_climate:
+  icon: mdi:fan
+switch.angolo:
+  icon: mdi:mdi:lightbulb
+camera.ffmpeg:
+  friendly_name: Entrance
+sensor.netatmo_chezgiorgia_temperature:
+  friendly_name: ChezGiorgia Temperature
+person.anna:
+  icon: mdi:human-female-girl
+person.marco:
+  icon: mdi:human
+climate.netatmo_cameretta:
+  friendly_name: Termostato

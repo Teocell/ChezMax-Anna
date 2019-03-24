@@ -1,0 +1,210 @@
+########## Template ##########
+  - platform: template
+    sensors:
+
+########## BB8 ##########
+      vacuum_battery:
+        friendly_name: "Vacuum - Battery"
+        value_template: "Battery: {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.battery_level }}"
+        device_class: battery
+        unit_of_measurement: '%'
+
+      vacuum_status:
+        friendly_name: "Vacuum - Status"
+        value_template: "Vacuum: {{ states.vacuum.xiaomi_vacuum_cleaner.attributes.status }}"
+
+########## Temperatura Casa ##########
+      apartment_temperature:
+        friendly_name: "Home Temperature"
+        value_template: "{{ (float(states.sensor.termostato_temperature.state) + float(states.sensor.bedroom_sensor_temperature.state) + float(states.sensor.netatmo_chezgiorgia_temperature.state) + float(states.sensor.pianta_temperature.state))/4 | round(2) }}"
+        unit_of_measurement: "°C"
+
+      termostato_temperature:
+        friendly_name: "Termostato"
+        value_template: "{{ float(states.climate.netatmo_cameretta.attributes.current_temperature) | round(2) }}"
+        unit_of_measurement: "°C"
+
+      kitchen_temperature:
+        friendly_name: "Kitchen Temperature"
+        value_template: "{{ float(states.sensor.pianta_temperature.state) | round(2) }}"
+        unit_of_measurement: "°C"
+
+########## Luminosità per luce Balcony ##########
+      apartment_illuminance:
+        friendly_name: "Apartment Illuminance"
+        value_template: "{{ (float(states.sensor.pianta_light_intensity.state) + float(states.sensor.narcisi_light_intensity.state) + float(states.sensor.orchidea_grande_light_intensity.state) + float(states.sensor.orchidea_piccola_light_intensity.state) + float(states.sensor.orchidea_ronzoni_light_intensity.state))/5 | round(2) }}"
+        unit_of_measurement: "lx"
+
+########## Icone Finestre ##########
+      icon_finestra_giorgia:
+        friendly_name: Finestra di Giorgia
+        value_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001c1cae0', 'on') %}
+            Aperta
+          {% else %}
+            Chiusa
+          {% endif %}
+        icon_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001c1cae0', 'on') %}
+            mdi:door-open
+          {% else %}
+            mdi:door-closed
+          {% endif %}
+
+      icon_finestra_salotto:
+        friendly_name: Finestra in Salotto
+        value_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001dcc094', 'on') %}
+            Aperta
+          {% else %}
+            Chiusa
+          {% endif %}
+        icon_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001dcc094', 'on') %}
+            mdi:door-open
+          {% else %}
+            mdi:door-closed
+          {% endif %}
+
+      icon_finestra_bedroom:
+        friendly_name: Finestra in Camera da Letto
+        value_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001bf2892', 'on') %}
+            Aperta
+          {% else %}
+            Chiusa
+          {% endif %}
+        icon_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001bf2892', 'on') %}
+            mdi:door-open
+          {% else %}
+            mdi:door-closed
+          {% endif %}
+
+      icon_porta:
+        friendly_name: Porta Ingresso
+        value_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d00014d1c0a', 'on') %}
+            Aperta
+          {% else %}
+            Chiusa
+          {% endif %}
+        icon_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d00014d1c0a', 'on') %}
+            mdi:door-open
+          {% else %}
+            mdi:door-closed
+          {% endif %}
+
+      icon_finestra_cucina:
+        friendly_name: Finestra in Cucina
+        value_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001d7adee', 'on') %}
+            Aperta
+          {% else %}
+            Chiusa
+          {% endif %}
+        icon_template: >-
+          {% if is_state('binary_sensor.door_window_sensor_158d0001d7adee', 'on') %}
+            mdi:door-open
+          {% else %}
+            mdi:door-closed
+          {% endif %}
+
+########## Fiori e Piante ##########
+  - platform: miflora
+    mac: 'C4:7C:8D:65:EB:7F'
+    name: Pianta
+    force_update: false
+    median: 3
+    monitored_conditions:
+      - moisture
+      - light
+      - temperature
+      - conductivity
+      - battery
+
+  - platform: miflora
+    mac: 'C4:7C:8D:65:EA:87'
+    name: Orchidea Ronzoni
+    force_update: false
+    median: 3
+    monitored_conditions:
+      - moisture
+      - light
+      - temperature
+      - conductivity
+      - battery
+
+  - platform: miflora
+    mac: 'C4:7C:8D:65:EB:08'
+    name: Narcisi
+    force_update: false
+    median: 3
+    monitored_conditions:
+      - moisture
+      - light
+      - temperature
+      - conductivity
+      - battery
+
+  - platform: miflora
+    mac: 'C4:7C:8D:66:47:D3'
+    name: Orchidea Grande
+    force_update: false
+    median: 3
+    monitored_conditions:
+      - moisture
+      - light
+      - temperature
+      - conductivity
+      - battery
+
+  - platform: miflora
+    mac: 'C4:7C:8D:66:47:81'
+    name: Orchidea Piccola
+    force_update: false
+    median: 3
+    monitored_conditions:
+      - moisture
+      - light
+      - temperature
+      - conductivity
+      - battery
+
+  - platform: min_max
+    name: Greenhouse temperature
+    type: mean
+    entity_ids:
+      - sensor.narcisi_temperature
+      - sensor.orchidea_grande_temperature
+      - sensor.orchidea_piccola_temperature
+      - sensor.orchidea_ronzoni_temperature
+      - sensor.pianta_temperature
+
+  - platform: mitemp_bt
+    mac: 4C:65:A8:DC:6F:E2
+    monitored_conditions:
+      - temperature
+      - humidity
+      - battery
+    name: "Bedroom sensor"
+    force_update: false
+    median: 3
+
+  - platform: season
+    type: meteorological
+
+  - platform: illuminance
+    name: DSW Illuminance
+    entity_id: weather.dark_sky
+
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /home
+      - type: memory_use_percent
+      - type: processor_use
+      - type: last_boot
+
+  - platform: rpi_power

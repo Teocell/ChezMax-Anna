@@ -1,0 +1,19 @@
+  project_id: !secret google_project_id
+  api_key: !secret google_api_key
+  expose_by_default: false
+  entity_config:
+    #climate.daikin:
+    #  expose: true
+    #  name: Condizionatore
+    input_boolean.allarme:
+      expose: true
+      name: Allarme
+    input_boolean.holiday:
+      expose: true
+      name: Modalità Vacanza
+    light.gateway_light_7811dcdeb4de:
+      expose: true
+      name: Luce Notturna
+    vacuum.xiaomi_vacuum_cleaner:
+      expose: true
+      name: BB8

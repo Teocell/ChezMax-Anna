@@ -1,0 +1,17 @@
+  # Home Cinema
+  - platform: dlink
+    host: 192.168.1.164
+    name: "Home Cinema"
+    username: Admin
+    password: 308028
+
+  # Angolo Salotto
+  - platform: dlink
+    host: 192.168.1.206
+    name: "Angolo"
+    username: Admin
+    password: 486950
+
+  - platform: broadlink
+    host: 192.168.1.242
+    mac: '34:ea:34:f4:3f:91'

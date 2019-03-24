@@ -1,0 +1,915 @@
+- id: turn_off_everything_if_nobody_home
+  alias: Turn off everything if nobody home
+  trigger:
+    platform: state
+    entity_id: input_boolean.allarme
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 5
+  action:
+  - service: climate.set_away_mode
+    data:
+      entity_id: climate.netatmo_cameretta
+      away_mode: true
+  - service: climate.set_operation_mode
+    data:
+      entity_id: climate.daikin
+      operation_mode: idle
+  - service: light.turn_off
+    entity_id: group.all_lights
+  - service: switch.turn_off
+    entity_id: group.all_switches
+
+- id: turn_on_balcony_aftersunset
+  alias: Turn on balcony light after sunset
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.apartment_illuminance
+    below: 300
+    for:
+      minutes: 10
+  condition:
+    condition: template
+    value_template: '{{ not is_state(''light.balcony'', ''on'') }}'
+  action:
+  - service: light.turn_on
+    entity_id: light.balcony
+
+- id: turn_on_balcony_whensomebodyhome
+  alias: Turn on balcony light when somebody arrives home after sunset
+  trigger:
+  - platform: state
+    entity_id: device_tracker.msperoni00s_iphone
+    from: not_home
+    to: home
+  - platform: state
+    entity_id: device_tracker.iphone_di_anna
+    from: not_home
+    to: home
+  - platform: state
+    entity_id: device_tracker.418d
+    from: not_home
+    to: home
+  condition:
+    condition: and
+    conditions:
+    - condition: template
+      value_template: '{{ not is_state(''light.balcony'', ''on'') }}'
+    - condition: sun
+      after: sunset
+  action:
+  - service: light.turn_on
+    entity_id: light.balcony
+
+- id: turn_off_balcony_beforesunrise
+  alias: Turn off balcony light before sunrise
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.apartment_illuminance
+    above: 300
+    for:
+      minutes: 10
+  condition:
+  - condition: template
+    value_template: '{{ not is_state(''light.balcony'', ''off'') }}'
+  action:
+  - entity_id: light.balcony
+    service: light.turn_off
+
+- id: gotobed
+  alias: 'Go To Bed: Automazioni'
+  trigger:
+    platform: state
+    entity_id: input_boolean.go_to_bed
+    from: 'off'
+    to: 'on'
+  action:
+  - service: switch.turn_off
+    entity_id:
+    - switch.home_cinema
+    - switch.angolo
+  - service: light.turn_off
+    data:
+      entity_id:
+      - light.lampada_ikea
+      - light.libreria
+      - light.gateway_light_7811dcdeb4de
+
+- id: arm_alarm
+  alias: Arm alarm
+  trigger:
+  - platform: state
+    entity_id: group.people
+    from: home
+    to: not_home
+  - platform: state
+    entity_id: input_boolean.holiday
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.babysitter
+    state: 'off'
+  action:
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.allarme
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Allarme inserito
+      data:
+        push:
+          badge: 5
+
+- id: disarm_alarm
+  alias: Disarm alarm
+  trigger:
+  - platform: state
+    entity_id: device_tracker.msperoni00s_iphone
+    from: not_home
+    to: home
+  - platform: state
+    entity_id: device_tracker.iphone_di_anna
+    from: not_home
+    to: home
+  - platform: state
+    entity_id: device_tracker.418d
+    from: not_home
+    to: home
+  - platform: state
+    entity_id: input_boolean.holiday
+    from: 'on'
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: input_boolean.allarme
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.allarme
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Allarme disinserito
+      data:
+        push:
+          badge: 5
+
+- id: update_babysitter
+  alias: 'Reset Babysitter Input at midnight'
+  trigger:
+    platform: time
+    at: '23:59:00'
+  condition:
+    condition: state
+    entity_id: input_boolean.babysitter
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.babysitter
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: input boolean babysitter has been resetted
+      data:
+        subtitle: Automatic message
+        push:
+          badge: 5
+
+- id: alarm_windows
+  alias: 'Allarme: una finestra è stata aperta'
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001bf2892
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001c1cae0
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001dcc094
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001d7adee
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.allarme
+    state: 'on'
+  action:
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Una finestra è stata aperta!!!
+      data:
+        subtitle: ALLARME!!!
+        push:
+          badge: 5
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Una finestra è stata aperta!!!
+      data:
+        subtitle: ALLARME!!!
+        push:
+          badge: 5
+
+- id: alarm_door
+  alias: 'Allarme: la porta è stata aperta'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00014d1c0a
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.allarme
+    state: 'on'
+  action:
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: La porta di casa è stata aperta!!!
+      data:
+        subtitle: ALLARME!!!
+        push:
+          badge: 5
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: La porta di casa è stata aperta!!!
+      data:
+        subtitle: ALLARME!!!
+        push:
+          badge: 5
+
+- id: alert_windowopen_Giorgia
+  alias: Hai lasciato la finestra di Giorgia aperta
+  trigger:
+    platform: state
+    entity_id: input_boolean.allarme
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: state
+    entity_id: binary_sensor.door_window_sensor_158d0001c1cae0
+    state: 'on'
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: E' voluto? Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra di Giorgia aperta?
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: E' voluto? Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra di Giorgia aperta?
+        push:
+          badge: 5
+
+- id: alert_windowopen_bedroom
+  alias: Hai lasciato la finestra in camera da letto aperta
+  trigger:
+    platform: state
+    entity_id: input_boolean.allarme
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: state
+    entity_id: binary_sensor.door_window_sensor_158d0001bf2892
+    state: 'on'
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: E' voluto? Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra in camera da letto aperta?
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: E' voluto? Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra in camera da letto aperta?
+        push:
+          badge: 5
+
+- id: alert_windowopen_salotto
+  alias: Hai lasciato la finestra in salotto aperta
+  trigger:
+    platform: state
+    entity_id: input_boolean.allarme
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: state
+    entity_id: binary_sensor.door_window_sensor_158d0001dcc094
+    state: 'on'
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: E' voluto? Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra in salotto aperta?
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: E' voluto? Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra in salotto aperta?
+        push:
+          badge: 5
+
+- id: alert_windowopen_cucina
+  alias: Hai lasciato la finestra in cucina aperta
+  trigger:
+    platform: state
+    entity_id: input_boolean.allarme
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: state
+    entity_id: binary_sensor.door_window_sensor_158d0001d7adee
+    state: 'on'
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra in cucina aperta?
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la finestra in cucina aperta?
+        push:
+          badge: 5
+
+- id: alert_dooropen
+  alias: Hai lasciato la porta aperta
+  trigger:
+    platform: state
+    entity_id: input_boolean.allarme
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: state
+    entity_id: binary_sensor.door_window_sensor_158d00014d1c0a
+    state: 'on'
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la porta aperta?
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Torna a chiuderla
+      data:
+        subtitle: Hai lasciato la porta aperta?
+        push:
+          badge: 5
+
+- id: gotobed_off
+  alias: 'Go To Bed: Spegni alle 6'
+  trigger:
+    platform: time
+    at: '06:00:00'
+  condition:
+    condition: state
+    entity_id: input_boolean.go_to_bed
+    state: 'on'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.go_to_bed
+
+- id: night_alarm
+  alias: 'Go To Bed: Allarme notturno'
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00014d1c0a
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001bf2892
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001c1cae0
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001dcc094
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001d7adee
+    from: 'off'
+    to: 'on'
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.go_to_bed
+      state: 'on'
+  action:
+    service: light.turn_on
+    entity_id: light.gateway_light_7811dcdeb4de
+
+- id: termostato_on
+  alias: Turn on Termostato
+  trigger:
+  - platform: zone
+    entity_id: device_tracker.iphone_di_anna
+    zone: zone.ronzoni
+    event: leave
+  - platform: state
+    entity_id: input_boolean.allarme
+    from: 'on'
+    to: 'off'
+  action:
+    service: climate.set_away_mode
+    data:
+      entity_id: climate.netatmo_cameretta
+      away_mode: false
+
+- id: turn_off_termostato_windowopen
+  alias: Turn off heater if windows are open for more than 15 minutes
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001bf2892
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 15
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001c1cae0
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 15
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001dcc094
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 15
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001d7adee
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 15
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00014d1c0a
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 15
+  action:
+    service: climate.set_operation_mode
+    data:
+      entity_id: climate.netatmo_cameretta
+      operation_mode: idle
+
+- id: turn_on_termostato_allwindowsclosed
+  alias: Turn on Termostato if all windows are closed
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001bf2892, binary_sensor.door_window_sensor_158d0001c1cae0,
+      binary_sensor.door_window_sensor_158d0001dcc094, binary_sensor.door_window_sensor_158d0001d7adee,
+      binary_sensor.door_window_sensor_158d00014d1c0a
+    from: 'on'
+    to: 'off'
+  action:
+    service: climate.set_operation_mode
+    data:
+      entity_id: climate.netatmo_cameretta
+      operation_mode: Schedule
+
+- id: gotobed_nightclima
+  alias: 'Go To Bed: Spegni climatizzatore a mezzanotte'
+  trigger:
+    platform: time
+    at: '00:00:00'
+  condition:
+    condition: state
+    entity_id: input_boolean.go_to_bed
+    state: 'on'
+  action:
+    service: climate.set_operation_mode
+    data:
+      entity_id: climate.daikin
+      operation_mode: idle
+
+- id: fire_alarm
+  alias: Play alarm on fire alarm
+  trigger:
+    platform: state
+    entity_id: binary_sensor.smoke_sensor_158d0001d935e0
+    from: 'off'
+    to: 'on'
+  action:
+  - service: xiaomi_aqara.play_ringtone
+    data:
+      gw_mac: 78:11:dc:de:b4:de
+      ringtone_id: 2
+      ringtone_vol: 100
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Non andare in panico!
+      data:
+        subtitle: C'è del fumo in cucina
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Non andare in panico! Anche Marco lo sa!
+      data:
+        subtitle: C'è del fumo in cucina
+        push:
+          badge: 5
+
+- id: warning_narcisi
+  alias: Warning innaffiare i Narcisi
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.narcisi_moisture
+    below: 20
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: I Narcisi hanno bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: I Narcisi hanno bisogno di te!
+        push:
+          badge: 5
+
+- id: alert_narcisi
+  alias: Alert innaffiare i Narcisi
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.narcisi_moisture
+    below: 10
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: I Narcisi hanno bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: I Narcisi hanno bisogno di te!
+        push:
+          badge: 5
+
+- id: warning_orchideagrande
+  alias: Warning innaffiare l'Orchidea Grande
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.orchidea_grande_moisture
+    below: 20
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: L'Orchidea Grande ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: L'Orchidea Grande ha bisogno di te!
+        push:
+          badge: 5
+
+- id: alert_orchideagrande
+  alias: Alert innaffiare l'Orchidea Grande
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.orchidea_grande_moisture
+    below: 10
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: L'Orchidea Grande ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: L'Orchidea Grande ha bisogno di te!
+        push:
+          badge: 5
+
+- id: warning_orchideapiccola
+  alias: Warning innaffiare l'Orchidea Piccola
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.orchidea_piccola_moisture
+    below: 20
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: L'Orchidea Piccola ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: L'Orchidea Piccola ha bisogno di te!
+        push:
+          badge: 5
+
+- id: alert_orchideapiccola
+  alias: Alert innaffiare l'Orchidea Piccola
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.orchidea_piccola_moisture
+    below: 10
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: L'Orchidea Piccola ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: L'Orchidea Piccola ha bisogno di te!
+        push:
+          badge: 5
+
+- id: warning_orchidearonzoni
+  alias: Warning innaffiare l'Orchidea Ronzoni
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.orchidea_ronzoni_moisture
+    below: 20
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: L'Orchidea Ronzoni ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: L'Orchidea Ronzoni ha bisogno di te!
+        push:
+          badge: 5
+
+- id: alert_orchidearonzoni
+  alias: Alert innaffiare l'Orchidea Ronzoni
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.orchidea_ronzoni_moisture
+    below: 10
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: L'Orchidea Ronzoni ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: L'Orchidea Ronzoni ha bisogno di te!
+        push:
+          badge: 5
+
+- id: warning_pianta
+  alias: Warning innaffiare la Pianta
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.pianta_moisture
+    below: 20
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: La Pianta ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: L'acqua sta finendo!
+      data:
+        subtitle: La Pianta ha bisogno di te!
+        push:
+          badge: 5
+
+- id: alert_pianta
+  alias: Alert innaffiare la Pianta
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.pianta_moisture
+    below: 10
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: La Pianta ha bisogno di te!
+        push:
+          badge: 5
+  - service: notify.ios_iphone_di_anna
+    data:
+      title: '@Sperons'
+      message: Dagli da bere!
+      data:
+        subtitle: La Pianta ha bisogno di te!
+        push:
+          badge: 5
+
+- id: battery_warning_narcisi
+  alias: 'Battery Warning: narcisi'
+  trigger:
+  - platform: state
+    entity_id: sensor.narcisi_battery
+    to: Low
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Cambia la pila al narcisi
+      data:
+        subtitle: Battery Warning
+        push:
+          badge: 5
+
+- id: battery_warning_orchidea
+  alias: 'Battery Warning: Orchidea'
+  trigger:
+  - platform: state
+    entity_id: sensor.orchidea_battery
+    to: Low
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Cambia la pila all'Orchidea
+      data:
+        subtitle: Battery Warning
+        push:
+          badge: 5
+
+- id: battery_warning_pianta
+  alias: 'Battery Warning: Pianta'
+  trigger:
+  - platform: state
+    entity_id: sensor.pianta_battery
+    to: Low
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Cambia la pila alla Pianta
+      data:
+        subtitle: Battery Warning
+        push:
+          badge: 5
+
+- id: battery_warning_sensorefumo
+  alias: 'Battery Warning: Sensore Fumo'
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.smoke_sensor_158d0001d935e0_battery
+    to: Low
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Cambia la pila al sensore fumo in cucina
+      data:
+        subtitle: Battery Warning
+        push:
+          badge: 5
+
+- id: battery_warning_waterbathroom
+  alias: 'Battery Warning: Sensore Perdite Bagno di Giorgia'
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.water_leak_sensor_158d0002138e3c_battery
+    to: Low
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Cambia la pila al sensore perdite d'acqua nel bagno di Giorgia
+      data:
+        subtitle: Battery Warning
+        push:
+          badge: 5
+
+- id: battery_warning_windowgiorgia
+  alias: 'Battery Warning: Sensore Finestra in camera di Giorgia'
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.door_window_sensor_158d0001c1cae0_battery
+    to: Low
+  action:
+  - service: notify.ios_msperoni00s_iphone
+    data:
+      title: '@Sperons'
+      message: Cambia la pila al sensore finestra in camera di Giorgia
+      data:
+        subtitle: Battery Warning
+        push:
+          badge: 5
+
+- id: 'rpi_power_issue'
+  alias: Power Problem Notification
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.rpi_power_status
+    above: 0
+    for:
+      minutes: 5
+  condition:
+  action:
+    service: persistent_notification.create
+    data:
+      message: "Charger reported {{ states.sensor.rpi_power_status.state }}"
+      title: "RPI Power Issue"
+
+- id: Camera ON
+  alias: Camera ON
+  hide_entity: false
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+    service: shell_command.camera_on

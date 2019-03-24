@@ -1,0 +1,5 @@
+People:
+  control: hidden
+  entities:
+    - device_tracker.msperoni00s_iphone
+    - device_tracker.iphone_di_anna

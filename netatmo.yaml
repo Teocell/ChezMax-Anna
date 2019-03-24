@@ -1,0 +1,4 @@
+  api_key: !secret netatmo_cliendid
+  secret_key: !secret netatmo_clientsecret
+  username: !secret mail
+  password: !secret family

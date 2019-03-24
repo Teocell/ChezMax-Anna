@@ -1,0 +1,75 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Chez Max&Anna
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret latitude
+  longitude: !secret longitude
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 136
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Rome
+  # Customization file
+  customize: !include customize.yaml
+
+automation: !include automations.yaml
+binary_sensor: !include binary_sensor.yaml
+bmw_connected_drive: !include bmw.yaml
+camera:
+  - platform: ffmpeg
+    input: -rtsp_transport tcp -i rtsp://192.168.1.119:8554/
+climate: !include climate.yaml
+config:
+conversation:
+custom_updater:
+  show_installable: true
+  track:
+    - components
+    - cards
+default_config:
+device_tracker: !include device_tracker.yaml
+discovery:
+  ignore:
+    - yeelight
+duckdns: !include duck_dns.yaml
+frontend:
+  javascript_version: latest
+google_assistant: !include googlecloudassistant.yaml
+group: !include groups.yaml
+history:
+http: !include http.yaml
+hue: !include hue.yaml
+ifttt: !include ifttt.yaml
+input_boolean: !include input_boolean.yaml
+ios:
+light: !include lights.yaml
+logbook:
+lovelace:
+  mode: yaml
+map:
+media_player: !include media_player.yaml
+netatmo: !include netatmo.yaml
+plant: !include plant.yaml
+proximity: !include proximity.yaml
+recorder:
+  purge_interval: 1
+  purge_keep_days: 5
+sensor: !include sensor.yaml
+shell_command:
+  camera_on: 'videop2proxy --ip 192.168.1.87 --token 79474c63313277507654785345347a36 --rtsp 8554'
+  camera_video_on: "miiocli device --ip 192.168.1.87 --token 79474c63313277507654785345347a36 raw_command set_video '[\"on\"]'"
+  camera_video_off: "miiocli device --ip 192.168.1.87 --token 79474c63313277507654785345347a36 raw_command set_video '[\"off\"]'"
+smartir:
+  update_branch: rc
+speedtestdotnet: !include speedtest.yaml
+stream:
+sun:
+switch: !include switch.yaml
+system_health:
+tts: !include tts.yaml
+updater: !include updater.yaml
+vacuum: !include vacuum.yaml
+weather: !include weather.yaml
+xiaomi_aqara: !include xiaomi.yaml
+zone: !include zone.yaml

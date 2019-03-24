@@ -1,0 +1,9 @@
+  home:
+    devices:
+      - device_tracker.msperoni00s_iphone
+      - device_tracker.iphone_di_anna
+      - device_tracker.418d
+
+  ronzoni:
+    devices:
+      - device_tracker.iphone_di_anna

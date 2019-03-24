@@ -1,0 +1,29 @@
+  allarme:
+    name: Attiva l'allarme
+    initial: off
+    icon: mdi:alarm-light
+
+  holiday:
+    name: Vai in vacanza
+    initial: off
+    icon: mdi:airplane-takeoff
+
+  night_climate:
+    name: Attiva climatizzazione notturna
+    initial: off
+    icon: mdi:weather-night
+
+  go_to_bed:
+    name: Andiamo a dormire
+    initial: off
+    icon: mdi:power-sleep
+
+  riattiva_allarme:
+    name: Riattiva l'allarme
+    initial: off
+    icon: mdi:alarm-light
+
+  babysitter:
+    name: Oggi c'è la babysitter
+    initial: off
+    icon: mdi:human-female-girl

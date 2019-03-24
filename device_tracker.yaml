@@ -1,0 +1,19 @@
+  - platform: ping
+    hosts:
+      xiaomi_hub: 192.168.1.135
+      angolo_salotto: 192.168.1.206
+      balcony: 192.168.1.84
+      chromecast: 192.168.1.163
+      xiaomi_router: 192.168.1.100
+      home_cinema: 192.168.1.164
+      broadlink: 192.168.1.242
+      termostato: 192.168.1.130
+      aqara_camera: 192.168.1.87
+      google_home1: 192.168.1.209
+      google_home2: 192.168.1.116
+      alexa: 192.168.1.168
+      bb8: 192.168.1.165
+      philips_hue: 192.168.1.117
+      netatmo_home_coach: 192.168.1.127
+      mibox: 192.168.1.229
+      #amazon_fireTV: 192.168.1.

@@ -1,0 +1,45 @@
+
+  narcisi:
+    sensors:
+      moisture: sensor.narcisi_moisture
+      battery: sensor.narcisi_battery
+      temperature: sensor.narcisi_temperature
+      conductivity: sensor.narcisi_conductivity
+      brightness: sensor.narcisi_brightness
+    min_moisture: 20
+
+  orchidea_grande:
+    sensors:
+      moisture: sensor.orchidea_grande_moisture
+      battery: sensor.orchidea_grande_battery
+      temperature: sensor.orchidea_grande_temperature
+      conductivity: sensor.orchidea_grande_conductivity
+      brightness: sensor.orchidea_grande_brightness
+    min_moisture: 20
+
+  orchidea_piccola:
+    sensors:
+      moisture: sensor.orchidea_piccola_moisture
+      battery: sensor.orchidea_piccola_battery
+      temperature: sensor.orchidea_piccola_temperature
+      conductivity: sensor.orchidea_piccola_conductivity
+      brightness: sensor.orchidea_piccola_brightness
+    min_moisture: 20
+
+  orchidea_ronzoni:
+    sensors:
+      moisture: sensor.orchidea_ronzoni_moisture
+      battery: sensor.orchidea_ronzoni_battery
+      temperature: sensor.orchidea_ronzoni_temperature
+      conductivity: sensor.orchidea_ronzoni_conductivity
+      brightness: sensor.orchidea_ronzoni_brightness
+    min_moisture: 20
+
+  pianta:
+    sensors:
+      moisture: sensor.pianta_moisture
+      battery: sensor.pianta_battery
+      temperature: sensor.pianta_temperature
+      conductivity: sensor.pianta_conductivity
+      brightness: sensor.pianta_brightness
+    min_moisture: 20

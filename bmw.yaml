@@ -1,0 +1,4 @@
+  name:
+    username: msperoni@gmail.com
+    password: !secret bmw
+    region: "rest_of_world"

@@ -1,0 +1,17 @@
+  - name: PwC
+    latitude: 45.477038337427
+    longitude: 9.1445617974254
+    radius: 100
+    icon: mdi:worker
+
+  - name: Ronzoni
+    latitude: 45.476217952305
+    longitude: 9.226413803297
+    radius: 100
+    icon: mdi:worker
+
+  - name: Home
+    latitude: 45.480778680732
+    longitude: 9.1756008744258
+    radius: 100
+    icon: mdi:home

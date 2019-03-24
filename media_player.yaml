@@ -1,0 +1,14 @@
+  - platform: spotify
+    client_id: !secret spotify_clientid
+    client_secret: !secret spotify_clientsecret
+
+  - platform: plex
+
+  - platform: androidtv
+    name: Fire TV
+    host: 192.168.1.140
+    adbkey: "/home/homeassistant/.homeassistant/android/adbkey"
+
+  - platform: androidtv
+    name: MI Box
+    host: 192.168.1.229
